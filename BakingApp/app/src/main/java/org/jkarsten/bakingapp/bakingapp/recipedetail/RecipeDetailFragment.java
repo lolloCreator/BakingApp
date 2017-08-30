@@ -1,6 +1,7 @@
 package org.jkarsten.bakingapp.bakingapp.recipedetail;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import org.jkarsten.bakingapp.bakingapp.OnFragmentInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
 import org.jkarsten.bakingapp.bakingapp.data.Food;
 import org.jkarsten.bakingapp.bakingapp.data.Step;
@@ -24,8 +26,10 @@ import org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity;
 import org.jkarsten.bakingapp.bakingapp.foodlist.ui.FoodImageUtil;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.IngredientsAdapter;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.StepsAdapter;
+import org.jkarsten.bakingapp.bakingapp.stepdetail.StepDetailActivity;
 
 public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnStepSelected {
+    public static final String STEP_ARGS = "STEP_ARGS";
     private OnFragmentInteractionListener mListener;
     boolean mDualPane;
 
@@ -113,11 +117,12 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
 
     @Override
     public void onSelected(Step step) {
-
+        goToStepActivity(step);
     }
 
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction();
-        boolean isDualPane();
+    public void goToStepActivity(Step step) {
+        Intent intent = new Intent(getContext(), StepDetailActivity.class);
+        intent.putExtra(STEP_ARGS, step);
+        startActivity(intent);
     }
 }
