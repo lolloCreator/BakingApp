@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="food_name_size">48sp</dimen>
+    <dimen name="quantity_size">32sp</dimen>
+    <dimen name="measurement_size">28sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>
