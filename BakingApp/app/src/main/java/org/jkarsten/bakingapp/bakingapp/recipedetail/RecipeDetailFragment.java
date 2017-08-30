@@ -14,10 +14,12 @@ import android.view.ViewGroup;
 
 import org.jkarsten.bakingapp.bakingapp.R;
 import org.jkarsten.bakingapp.bakingapp.data.Food;
+import org.jkarsten.bakingapp.bakingapp.data.Step;
 import org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.IngredientsAdapter;
+import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.StepsAdapter;
 
-public class RecipeDetailFragment extends Fragment {
+public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnStepSelected {
     private OnFragmentInteractionListener mListener;
     boolean mDualPane;
 
@@ -25,6 +27,7 @@ public class RecipeDetailFragment extends Fragment {
     RecyclerView mIngredientsRecyclerView;
     RecyclerView mStepsRecyclerView;
     IngredientsAdapter mIngredientsAdapter;
+    StepsAdapter mStepsAdapter;
 
     private Food mFood;
 
@@ -46,14 +49,20 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void initRecyclerView() {
-        mIngredientsRecyclerView = (RecyclerView) mRootView.findViewById(R.id.ingredients_recylerview);
         mStepsRecyclerView = (RecyclerView) mRootView.findViewById(R.id.steps_recyclerview);
+        mStepsAdapter = new StepsAdapter(getContext(), this);
+        mStepsRecyclerView.setAdapter(mStepsAdapter);
+        mStepsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+
+        mIngredientsRecyclerView = (RecyclerView) mRootView.findViewById(R.id.ingredients_recylerview);
         mIngredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mIngredientsAdapter = new IngredientsAdapter(getContext());
         mIngredientsRecyclerView.setAdapter(mIngredientsAdapter);
+
         if (mFood != null) {
             mIngredientsAdapter.setIngredients(mFood.getIngredients());
+            mStepsAdapter.setSteps(mFood.getSteps());
         }
     }
 
@@ -82,6 +91,11 @@ public class RecipeDetailFragment extends Fragment {
     public void onStart() {
         super.onStart();
         initRecyclerView();
+    }
+
+    @Override
+    public void onSelected(Step step) {
+
     }
 
     public interface OnFragmentInteractionListener {
