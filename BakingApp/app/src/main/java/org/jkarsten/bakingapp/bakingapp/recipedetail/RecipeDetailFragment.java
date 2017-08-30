@@ -28,6 +28,8 @@ import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.IngredientsAdapter;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.StepsAdapter;
 import org.jkarsten.bakingapp.bakingapp.stepdetail.StepDetailActivity;
 
+import static org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity.FOOD_ARGS;
+
 public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnStepSelected {
     public static final String STEP_ARGS = "STEP_ARGS";
     private OnFragmentInteractionListener mListener;
@@ -85,7 +87,7 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
             mDualPane = mListener.isDualPane();
 
             AppCompatActivity activityCompat = (AppCompatActivity) context;
-            mFood = (Food) activityCompat.getIntent().getSerializableExtra(FoodListActivity.FOOD_ARGS);
+            mFood = (Food) activityCompat.getIntent().getSerializableExtra(FOOD_ARGS);
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -116,13 +118,14 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
     }
 
     @Override
-    public void onSelected(Step step) {
-        goToStepActivity(step);
+    public void onSelected(Step step, int position) {
+        goToStepActivity(step, position);
     }
 
-    public void goToStepActivity(Step step) {
+    public void goToStepActivity(Step step, int position) {
         Intent intent = new Intent(getContext(), StepDetailActivity.class);
-        intent.putExtra(STEP_ARGS, step);
+        intent.putExtra(FOOD_ARGS, mFood);
+        intent.putExtra(STEP_ARGS, position);
         startActivity(intent);
     }
 }

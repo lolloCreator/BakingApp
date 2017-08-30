@@ -66,20 +66,20 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
             mStepTextView = (TextView) itemView.findViewById(R.id.step_item_name_textview);
         }
 
-        public void bind(final Step step, int position) {
+        public void bind(final Step step, final int position) {
             mNumberTextView.setText(String.valueOf(position));
             mStepTextView.setText(step.getShortDescription());
 
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mOnStepSelected.onSelected(step);
+                    mOnStepSelected.onSelected(step, position);
                 }
             });
         }
     }
 
     public interface OnStepSelected {
-        void onSelected(Step step);
+        void onSelected(Step step, int position);
     }
 }
