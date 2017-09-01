@@ -3,10 +3,12 @@ package org.jkarsten.bakingapp.bakingapp.stepdetail;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import org.jkarsten.bakingapp.bakingapp.OnFragmentInteractionListener;
+import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
 
-public class StepDetailActivity extends AppCompatActivity implements OnFragmentInteractionListener{
+import io.reactivex.subjects.PublishSubject;
+
+public class StepDetailActivity extends AppCompatActivity implements OnDualPaneInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,12 +17,12 @@ public class StepDetailActivity extends AppCompatActivity implements OnFragmentI
     }
 
     @Override
-    public void onFragmentInteraction() {
-
+    public boolean isDualPane() {
+        return false;
     }
 
     @Override
-    public boolean isDualPane() {
-        return findViewById(R.id.step_detail_fragment) != null;
+    public PublishSubject<Data> getPublisher() {
+        throw new UnsupportedOperationException();
     }
 }

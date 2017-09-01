@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -23,17 +22,15 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import org.jkarsten.bakingapp.bakingapp.OnFragmentInteractionListener;
+import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
 import org.jkarsten.bakingapp.bakingapp.data.Food;
 import org.jkarsten.bakingapp.bakingapp.data.Step;
 import org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.RecipeDetailFragment;
 
-import java.io.Serializable;
-
 public class StepDetailFragment extends Fragment {
-    private OnFragmentInteractionListener mListener;
+    private OnDualPaneInteractionListener mListener;
     TextView mStepDescTextView;
     View mRootView;
 
@@ -60,11 +57,11 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnDualPaneInteractionListener) {
+            mListener = (OnDualPaneInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnDualPaneInteractionListener");
         }
     }
 

@@ -2,10 +2,8 @@ package org.jkarsten.bakingapp.bakingapp.recipedetail;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,11 +16,10 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import org.jkarsten.bakingapp.bakingapp.OnFragmentInteractionListener;
+import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
 import org.jkarsten.bakingapp.bakingapp.data.Food;
 import org.jkarsten.bakingapp.bakingapp.data.Step;
-import org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity;
 import org.jkarsten.bakingapp.bakingapp.foodlist.ui.FoodImageUtil;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.IngredientsAdapter;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.StepsAdapter;
@@ -32,7 +29,7 @@ import static org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity.FOOD_AR
 
 public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnStepSelected {
     public static final String STEP_ARGS = "STEP_ARGS";
-    private OnFragmentInteractionListener mListener;
+    private OnDualPaneInteractionListener mListener;
     boolean mDualPane;
 
     View mRootView;
@@ -82,15 +79,15 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnDualPaneInteractionListener) {
+            mListener = (OnDualPaneInteractionListener) context;
             mDualPane = mListener.isDualPane();
 
             AppCompatActivity activityCompat = (AppCompatActivity) context;
             mFood = (Food) activityCompat.getIntent().getSerializableExtra(FOOD_ARGS);
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnDualPaneInteractionListener");
         }
     }
 
