@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,27 +25,34 @@ import com.google.android.exoplayer2.util.Util;
 
 import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
-import org.jkarsten.bakingapp.bakingapp.data.Food;
 import org.jkarsten.bakingapp.bakingapp.data.Step;
 import org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.RecipeDetailFragment;
 
-import java.util.List;
+import javax.inject.Inject;
 
-public class StepDetailFragment extends Fragment {
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.subjects.PublishSubject;
+
+public class StepDetailFragment extends Fragment implements StepDetailContract.View {
     private OnDualPaneInteractionListener mListener;
     TextView mStepDescTextView;
     View mRootView;
+    TextView mVideoUnavailableTextView;
 
-    private Step[] mSteps;
-    Step mStep;
+    //private Step[] mSteps;
+    //Step mStep;
 
 
-    private int mStepPosition;
+    //private int mStepPosition;
     private SimpleExoPlayerView mPlayerView;
     private SimpleExoPlayer mExoPlayer;
     private Button mPreviousButton;
     private Button mNextButton;
+
+    @Inject
+    StepDetailContract.Presenter mPresenter;
 
     public StepDetailFragment() {
     }
@@ -69,6 +75,12 @@ public class StepDetailFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnDualPaneInteractionListener");
         }
+
+        DaggerStepDetailComponent.builder()
+                .stepDetailModule(new StepDetailModule(this))
+                .build()
+                .inject(this);
+
     }
 
     @Override
@@ -80,50 +92,63 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        extractIntentData();
         mStepDescTextView = (TextView) mRootView.findViewById(R.id.description_textview);
-        mStepPosition = getActivity().getIntent().getIntExtra(RecipeDetailFragment.STEP_ARGS, 0);
-        Parcelable[] parcelables = getActivity().getIntent().getParcelableArrayExtra(FoodListActivity.FOOD_ARGS);
-        mSteps = new Step[parcelables.length];
-        int ii=0;
-        for (Parcelable parcelable: parcelables) {
-            mSteps[ii++] = (Step) parcelable;
-        }
-
         mPreviousButton = (Button) mRootView.findViewById(R.id.previous_button);
-        mPreviousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onPreviousClicked(view);
-            }
-        });
-
         mNextButton = (Button) mRootView.findViewById(R.id.next_button);
+        mVideoUnavailableTextView = (TextView) mRootView.findViewById(R.id.video_unavailable_textView);
+
+        mPresenter.start();
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onNextClicked(view);
+                mPresenter.onNextButtonPressed();
             }
         });
-        setCurrentStep();
+        mPreviousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.onPreviousButtonPressed();
+            }
+        });
     }
 
-    private void setCurrentStep() {
-        if (mSteps != null && mStepPosition < mSteps.length) {
-            mStep = mSteps[mStepPosition];
-            mStepDescTextView.setText(mStep.getDescription());
+    @Override
+    public void hideVideoUnavailable() {
+        mVideoUnavailableTextView.setVisibility(View.GONE);
+    }
 
-            if (mExoPlayer != null) {
-                releasePlayer();
-            }
-            intializePlayer();
-            initMediaSource(mStep.getVideoURL());
+    @Override
+    public void showVideoUnavailable() {
+        mVideoUnavailableTextView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hidePreviousAndNextButton() {
+        mNextButton.setVisibility(View.GONE);
+        mPreviousButton.setVisibility(View.GONE);
+    }
+
+    private void extractIntentData() {
+        if (mListener == null || mListener.isDualPane())
+            return;
+
+        int stepPosition = getActivity().getIntent().getIntExtra(RecipeDetailFragment.STEP_ARGS, 0);
+        Parcelable[] parcelables = getActivity().getIntent().getParcelableArrayExtra(FoodListActivity.FOOD_ARGS);
+        Step[] steps = new Step[parcelables.length];
+        int ii=0;
+        for (Parcelable parcelable: parcelables) {
+            steps[ii++] = (Step) parcelable;
         }
+        mPresenter.onStepsReady(steps, stepPosition);
     }
 
     private void releasePlayer() {
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if (mExoPlayer != null) {
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 
     private void initMediaSource(String videoURL) {
@@ -147,17 +172,42 @@ public class StepDetailFragment extends Fragment {
         mPlayerView.setPlayer(mExoPlayer);
     }
 
-    public void onPreviousClicked(View view) {
-        if (mStepPosition - 1 >= 0) {
-            mStepPosition--;
-            setCurrentStep();
+    @Override
+    public void showStep(Step step) {
+        if (step != null) {
+            mStepDescTextView.setText(step.getDescription());
+
+            if (mExoPlayer != null) {
+                releasePlayer();
+            }
+            intializePlayer();
+            initMediaSource(step.getVideoURL());
         }
     }
 
-    public void onNextClicked(View view) {
-        if (mStepPosition + 1 < mSteps.length) {
-            mStepPosition++;
-            setCurrentStep();
+    @Override
+    public Disposable createStepSubscription() {
+        PublishSubject<Step> publishSubject = mListener.getPublisher();
+        return publishSubject.subscribe(new Consumer<Step>() {
+            @Override
+            public void accept(Step step) throws Exception {
+                mPresenter.onStepSelected(step);
+            }
+        });
+    }
+
+    @Override
+    public boolean isDualPane() {
+        if (mListener == null) {
+            return false;
         }
+        return mListener.isDualPane();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mPresenter.stop();
+        releasePlayer();
     }
 }
