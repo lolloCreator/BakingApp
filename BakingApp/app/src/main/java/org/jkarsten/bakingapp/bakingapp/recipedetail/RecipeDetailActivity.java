@@ -26,16 +26,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnDualPan
     @Override
     protected void onStart() {
         super.onStart();
-
-        if (isDualPane()) {
-            mPublishSubject = PublishSubject.create();
-        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (isDualPane()) {
+        if (isDualPane() && mPublishSubject != null) {
             mPublishSubject.onComplete();
         }
     }
@@ -49,6 +45,9 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnDualPan
     public PublishSubject<Step> getPublisher() {
         if (!isDualPane()) {
             throw new UnsupportedOperationException();
+        }
+        if (mPublishSubject == null) {
+            mPublishSubject = PublishSubject.create();
         }
         return mPublishSubject;
     }

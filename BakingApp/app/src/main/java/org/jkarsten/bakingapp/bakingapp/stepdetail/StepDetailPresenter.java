@@ -53,7 +53,7 @@ public class StepDetailPresenter implements StepDetailContract.Presenter {
     @Override
     public void onStepSelected(Step step) {
         if (mView.isDualPane()) {
-            checkVideoAvailability(mSteps[mPosition]);
+            checkVideoAvailability(step);
             mView.showStep(step);
         }
     }
