@@ -19,18 +19,23 @@ import com.squareup.picasso.Picasso;
 import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
 import org.jkarsten.bakingapp.bakingapp.data.Food;
+import org.jkarsten.bakingapp.bakingapp.data.Ingredient;
 import org.jkarsten.bakingapp.bakingapp.data.Step;
 import org.jkarsten.bakingapp.bakingapp.foodlist.ui.FoodImageUtil;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.IngredientsAdapter;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.StepsAdapter;
 import org.jkarsten.bakingapp.bakingapp.stepdetail.StepDetailActivity;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import static org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity.FOOD_ARGS;
 
-public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnStepSelected {
+public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnStepSelected,
+        RecipeDetailContract.View {
     public static final String STEP_ARGS = "STEP_ARGS";
     private OnDualPaneInteractionListener mListener;
-    boolean mDualPane;
 
     View mRootView;
     ImageView mHeaderImageView;
@@ -39,17 +44,10 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
     IngredientsAdapter mIngredientsAdapter;
     StepsAdapter mStepsAdapter;
 
-
-    private Food mFood;
+    @Inject
+    RecipeDetailContract.Presenter mPresenter;
 
     public RecipeDetailFragment() {
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mDualPane = false;
     }
 
     @Override
@@ -69,22 +67,26 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
         mIngredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mIngredientsAdapter = new IngredientsAdapter(getContext());
         mIngredientsRecyclerView.setAdapter(mIngredientsAdapter);
-
-        if (mFood != null) {
-            mIngredientsAdapter.setIngredients(mFood.getIngredients());
-            mStepsAdapter.setSteps(mFood.getSteps());
-        }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
+        DaggerRecipeDetailComponent
+                .builder()
+                .recipeDetailModule(new RecipeDetailModule(this))
+                .build()
+                .inject(this);
+
         if (context instanceof OnDualPaneInteractionListener) {
             mListener = (OnDualPaneInteractionListener) context;
-            mDualPane = mListener.isDualPane();
 
-            AppCompatActivity activityCompat = (AppCompatActivity) context;
-            mFood = (Food) activityCompat.getIntent().getSerializableExtra(FOOD_ARGS);
+            if (context instanceof AppCompatActivity) {
+                AppCompatActivity activityCompat = (AppCompatActivity) getContext();
+                Food food = activityCompat.getIntent().getParcelableExtra(FOOD_ARGS);
+                mPresenter.onFoodReady(food);
+            }
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnDualPaneInteractionListener");
@@ -101,28 +103,76 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
     public void onStart() {
         super.onStart();
         initRecyclerView();
-        FoodImageUtil.getFoodImageURL(mFood);
-
-        mHeaderImageView = (ImageView) mRootView.findViewById(R.id.image_header);
-        Picasso.with(getContext()).load(mFood.getImage()).into(mHeaderImageView);
 
         Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity)getActivity();
         activity.setSupportActionBar(toolbar);
 
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar_layout);
-        collapsingToolbarLayout.setTitle(mFood.getName());
+        mPresenter.start();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mPresenter.stop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.destroy();
     }
 
     @Override
     public void onSelected(Step step, int position) {
-        goToStepActivity(step, position);
+        mPresenter.onStepSelected(position);
     }
 
-    public void goToStepActivity(Step step, int position) {
+    @Override
+    public void goToStepActivity(List<Step> steps, int position) {
         Intent intent = new Intent(getContext(), StepDetailActivity.class);
-        intent.putExtra(FOOD_ARGS, mFood);
+        intent.putExtra(FOOD_ARGS, steps.toArray(new Step[steps.size()]));
         intent.putExtra(STEP_ARGS, position);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean isDualPane() {
+        if (mListener == null)
+            return false;
+        return mListener.isDualPane();
+    }
+
+    @Override
+    public void showStepDetail(Step step) {
+        mListener.getPublisher().onNext(step);
+    }
+
+    @Override
+    public void showIngredients(List<Ingredient> ingredients) {
+        if (ingredients != null) {
+            mIngredientsAdapter.setIngredients(ingredients);
+        }
+    }
+
+    @Override
+    public void showSteps(List<Step> steps) {
+        if (steps != null) {
+            mStepsAdapter.setSteps(steps);
+        }
+    }
+
+    @Override
+    public void setHeaderImage(String foodImage) {
+        //FoodImageUtil.getFoodImageURL(mFood);
+
+        mHeaderImageView = (ImageView) mRootView.findViewById(R.id.image_header);
+        Picasso.with(getContext()).load(foodImage).into(mHeaderImageView);
+    }
+
+    @Override
+    public void setFoodTitle(String title) {
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar_layout);
+        collapsingToolbarLayout.setTitle(title);
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
+import org.jkarsten.bakingapp.bakingapp.data.Step;
 
 import io.reactivex.subjects.PublishSubject;
 
@@ -22,7 +23,7 @@ public class StepDetailActivity extends AppCompatActivity implements OnDualPaneI
     }
 
     @Override
-    public PublishSubject<Data> getPublisher() {
+    public PublishSubject<Step> getPublisher() {
         throw new UnsupportedOperationException();
     }
 }

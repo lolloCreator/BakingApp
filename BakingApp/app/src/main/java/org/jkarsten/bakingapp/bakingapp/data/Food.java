@@ -1,5 +1,8 @@
 package org.jkarsten.bakingapp.bakingapp.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -7,13 +10,52 @@ import java.util.List;
  * Created by juankarsten on 8/28/17.
  */
 
-public class Food implements Serializable {
+public class Food implements Parcelable {
     private int id;
     private String name;
     private List<Ingredient> ingredients;
     private List<Step> steps;
     private String servings;
     private String image;
+
+    public Food() {
+    }
+
+    protected Food(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        ingredients = in.createTypedArrayList(Ingredient.CREATOR);
+        steps = in.createTypedArrayList(Step.CREATOR);
+        servings = in.readString();
+        image = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeTypedList(ingredients);
+        dest.writeTypedList(steps);
+        dest.writeString(servings);
+        dest.writeString(image);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Food> CREATOR = new Creator<Food>() {
+        @Override
+        public Food createFromParcel(Parcel in) {
+            return new Food(in);
+        }
+
+        @Override
+        public Food[] newArray(int size) {
+            return new Food[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -74,4 +116,7 @@ public class Food implements Serializable {
                 ", image='" + image + '\'' +
                 '}';
     }
+
+
+
 }

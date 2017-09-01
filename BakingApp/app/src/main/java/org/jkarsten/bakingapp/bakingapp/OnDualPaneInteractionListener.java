@@ -1,6 +1,7 @@
 package org.jkarsten.bakingapp.bakingapp;
 
 import org.jkarsten.bakingapp.bakingapp.data.Food;
+import org.jkarsten.bakingapp.bakingapp.data.Step;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -14,7 +15,7 @@ import io.reactivex.subjects.PublishSubject;
 
 public interface OnDualPaneInteractionListener {
     boolean isDualPane();
-    PublishSubject<Data> getPublisher();
+    PublishSubject<Step> getPublisher();
 
      class Data {
         private Food mFood;

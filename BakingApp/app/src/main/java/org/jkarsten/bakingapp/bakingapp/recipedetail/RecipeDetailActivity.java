@@ -5,11 +5,12 @@ import android.os.Bundle;
 
 import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
+import org.jkarsten.bakingapp.bakingapp.data.Step;
 
 import io.reactivex.subjects.PublishSubject;
 
 public class RecipeDetailActivity extends AppCompatActivity implements OnDualPaneInteractionListener {
-    private PublishSubject<Data> mPublishSubject;
+    private PublishSubject<Step> mPublishSubject;
     private boolean mDualPane;
 
     @Override
@@ -18,6 +19,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnDualPan
         setContentView(R.layout.activity_recipe_detail);
 
         mDualPane = (findViewById(R.id.dual_pane_layout) != null);
+
+
     }
 
     @Override
@@ -43,7 +46,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnDualPan
     }
 
     @Override
-    public PublishSubject<Data> getPublisher() {
+    public PublishSubject<Step> getPublisher() {
         if (!isDualPane()) {
             throw new UnsupportedOperationException();
         }

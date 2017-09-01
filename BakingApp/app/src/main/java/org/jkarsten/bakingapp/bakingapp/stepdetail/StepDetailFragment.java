@@ -3,7 +3,9 @@ package org.jkarsten.bakingapp.bakingapp.stepdetail;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +31,17 @@ import org.jkarsten.bakingapp.bakingapp.data.Step;
 import org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.RecipeDetailFragment;
 
+import java.util.List;
+
 public class StepDetailFragment extends Fragment {
     private OnDualPaneInteractionListener mListener;
     TextView mStepDescTextView;
     View mRootView;
 
+    private Step[] mSteps;
     Step mStep;
-    private Food mFood;
+
+
     private int mStepPosition;
     private SimpleExoPlayerView mPlayerView;
     private SimpleExoPlayer mExoPlayer;
@@ -76,7 +82,12 @@ public class StepDetailFragment extends Fragment {
         super.onStart();
         mStepDescTextView = (TextView) mRootView.findViewById(R.id.description_textview);
         mStepPosition = getActivity().getIntent().getIntExtra(RecipeDetailFragment.STEP_ARGS, 0);
-        mFood = (Food) getActivity().getIntent().getSerializableExtra(FoodListActivity.FOOD_ARGS);
+        Parcelable[] parcelables = getActivity().getIntent().getParcelableArrayExtra(FoodListActivity.FOOD_ARGS);
+        mSteps = new Step[parcelables.length];
+        int ii=0;
+        for (Parcelable parcelable: parcelables) {
+            mSteps[ii++] = (Step) parcelable;
+        }
 
         mPreviousButton = (Button) mRootView.findViewById(R.id.previous_button);
         mPreviousButton.setOnClickListener(new View.OnClickListener() {
@@ -97,8 +108,8 @@ public class StepDetailFragment extends Fragment {
     }
 
     private void setCurrentStep() {
-        if (mFood != null && mFood.getSteps() != null && mStepPosition < mFood.getSteps().size()) {
-            mStep = mFood.getSteps().get(mStepPosition);
+        if (mSteps != null && mStepPosition < mSteps.length) {
+            mStep = mSteps[mStepPosition];
             mStepDescTextView.setText(mStep.getDescription());
 
             if (mExoPlayer != null) {
@@ -144,7 +155,7 @@ public class StepDetailFragment extends Fragment {
     }
 
     public void onNextClicked(View view) {
-        if (mStepPosition + 1 < mFood.getSteps().size()) {
+        if (mStepPosition + 1 < mSteps.length) {
             mStepPosition++;
             setCurrentStep();
         }
