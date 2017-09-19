@@ -16,7 +16,9 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -29,6 +31,7 @@ public class RemoteFoodDataSource implements FoodDataSource {
     private static final String UNSUCCESFUL = "unsuccessful connection";
     private OkHttpClient mHttpClient;
     private Uri API_URI = Uri.parse("http://go.udacity.com/android-baking-app-json");
+    private Call mNewCall;
 
     public RemoteFoodDataSource(OkHttpClient okHttpClient) {
         mHttpClient = okHttpClient;
@@ -39,7 +42,8 @@ public class RemoteFoodDataSource implements FoodDataSource {
                 .url(API_URI.toString())
                 .build();
 
-        Response response = mHttpClient.newCall(request).execute();
+        mNewCall = mHttpClient.newCall(request);
+        Response response = mNewCall.execute();
         if (!response.isSuccessful()) {
             throw new RuntimeException(UNSUCCESFUL);
         } else {
@@ -55,14 +59,29 @@ public class RemoteFoodDataSource implements FoodDataSource {
         return Observable.create(new ObservableOnSubscribe<Food>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<Food> e) throws Exception {
-                List<Food> foods = requestFood();
+                List<Food> foods = null;
+                try {
+                    foods = requestFood();
+                } catch (Exception exc) {
+                    if (!e.isDisposed())
+                        e.onError(exc);
+                }
                 if (foods != null) {
                     for (Food food:foods) {
                         e.onNext(food);
                     }
+                    Log.d(RemoteFoodDataSource.class.getSimpleName(), "onComplete");
                     e.onComplete();
                 } else {
-                    e.onError(new RuntimeException(UNSUCCESFUL));
+                    if (!e.isDisposed())
+                        e.onError(new RuntimeException(UNSUCCESFUL));
+                }
+            }
+        }).doOnDispose(new Action() {
+            @Override
+            public void run() throws Exception {
+                if (mNewCall != null && mNewCall.isExecuted()) {
+                    mNewCall.cancel();
                 }
             }
         }).subscribeOn(Schedulers.io());

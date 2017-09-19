@@ -53,19 +53,17 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     }
 
     public class IngredientViewHolder extends RecyclerView.ViewHolder {
-        TextView mIngredientNumberTextView;
         TextView mIngredientNameTextView;
 
         public IngredientViewHolder(View itemView) {
             super(itemView);
 
-            mIngredientNumberTextView = (TextView) itemView.findViewById(R.id.ingredient_item_number_textview);
             mIngredientNameTextView = (TextView) itemView.findViewById(R.id.ingredient_item_name_textview);
         }
 
         public void bind(Ingredient ingredient, int position) {
-            mIngredientNumberTextView.setText(String.valueOf(position));
-            mIngredientNameTextView.setText(ingredient.getQuantity() + " " + ingredient.getMeasure() + "  "
+            mIngredientNameTextView.setText(String.valueOf(position) + ". "
+                    + ingredient.getQuantity() + " " + ingredient.getMeasure() + "  "
                     +  ingredient.getIngredient());
         }
     }

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.jkarsten.bakingapp.bakingapp.data.Food;
 import org.jkarsten.bakingapp.bakingapp.data.source.FoodDataSource;
+import org.jkarsten.bakingapp.bakingapp.data.source.remote.RemoteFoodDataSource;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.RecipeDetailActivity;
 
 import java.util.ArrayList;
@@ -80,6 +81,7 @@ public class FoodListPresenter implements FoodListContract.Presenter {
     public void stop() {
         if (!mCompositeDisposable.isDisposed()) {
             mCompositeDisposable.dispose();
+            Log.d(FoodListPresenter.class.getSimpleName(), "disposed");
         }
     }
 
