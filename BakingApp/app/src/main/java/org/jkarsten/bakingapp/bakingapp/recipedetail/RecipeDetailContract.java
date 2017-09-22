@@ -21,10 +21,15 @@ public interface RecipeDetailContract {
         void showSteps(List<Step> steps);
         void setHeaderImage(String foodImage);
         void setFoodTitle(String title);
+
+        void updateWidget(Food mFood);
+
+        void showImage(boolean favorite);
     }
 
     interface Presenter extends BasePresenter {
         void onStepSelected(int position);
         void onFoodReady(Food food);
+        void onClickFavoriteButton();
     }
 }

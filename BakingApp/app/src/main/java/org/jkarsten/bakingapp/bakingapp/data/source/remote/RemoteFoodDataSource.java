@@ -1,6 +1,9 @@
 package org.jkarsten.bakingapp.bakingapp.data.source.remote;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -17,11 +20,13 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Action;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import timber.log.Timber;
 
 /**
  * Created by juankarsten on 8/28/17.
@@ -33,8 +38,14 @@ public class RemoteFoodDataSource implements FoodDataSource {
     private Uri API_URI = Uri.parse("http://go.udacity.com/android-baking-app-json");
     private Call mNewCall;
 
-    public RemoteFoodDataSource(OkHttpClient okHttpClient) {
+    private final Context mContext;
+    public static final String LOCAL_PREF = "LocalFoodDataSource";
+    public static final String LOCAL_PREF_FOOD = "LocalFoodDataSource_FOOD";
+    public static final int NO_LOCAL_PREF_FOOD = -1;
+
+    public RemoteFoodDataSource(OkHttpClient okHttpClient, Context context) {
         mHttpClient = okHttpClient;
+        mContext = context;
     }
 
     private List<Food> requestFood() throws IOException {
@@ -77,7 +88,8 @@ public class RemoteFoodDataSource implements FoodDataSource {
                         e.onError(new RuntimeException(UNSUCCESFUL));
                 }
             }
-        }).doOnDispose(new Action() {
+        }).map(getFood())
+          .doOnDispose(new Action() {
             @Override
             public void run() throws Exception {
                 if (mNewCall != null && mNewCall.isExecuted()) {
@@ -85,5 +97,52 @@ public class RemoteFoodDataSource implements FoodDataSource {
                 }
             }
         }).subscribeOn(Schedulers.io());
+    }
+
+    @Override
+    public Function<Food, Food> getFood() {
+        return new Function<Food, Food>() {
+            @Override
+            public Food apply(@NonNull Food food) throws Exception {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                int favoriteFoodId = sharedPreferences.getInt(LOCAL_PREF_FOOD, NO_LOCAL_PREF_FOOD);
+                food.setFavorite(favoriteFoodId == food.getId());
+                Timber.d(food.toString());
+                return food;
+            }
+        };
+    }
+
+
+
+
+    @Override
+    public Observable<Food> toggleFood(final Food food) {
+        Timber.d("toggleFood");
+        return Observable
+                .just(food)
+                .map(getFood())
+                .map(new Function<Food, Food>() {
+                    @Override
+                    public Food apply(@NonNull Food food) throws Exception {
+                        food.setFavorite(!food.isFavorite());
+                        return food;
+                    }
+                })
+                .map(new Function<Food, Food>() {
+                    @Override
+                    public Food apply(@NonNull Food food) throws Exception {
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        if (food.isFavorite()) {
+                            editor.putInt(LOCAL_PREF_FOOD, food.getId());
+                        } else {
+                            editor.putInt(LOCAL_PREF_FOOD, NO_LOCAL_PREF_FOOD);
+                        }
+                        editor.commit();
+                        return food;
+                    }
+                })
+                .subscribeOn(Schedulers.io());
     }
 }

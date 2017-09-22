@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RemoteFoodDataSource remoteFoodDataSource = new RemoteFoodDataSource(new OkHttpClient());
+        RemoteFoodDataSource remoteFoodDataSource = new RemoteFoodDataSource(new OkHttpClient(), this);
         Observable<Food> observable = remoteFoodDataSource.makeFoodObservable();
 
         Disposable disposable = observable.subscribe(new Consumer<Food>() {

@@ -12,6 +12,7 @@ import android.view.View;
 
 import org.jkarsten.bakingapp.bakingapp.R;
 import org.jkarsten.bakingapp.bakingapp.data.Food;
+import org.jkarsten.bakingapp.bakingapp.data.FoodDataModule;
 import org.jkarsten.bakingapp.bakingapp.foodlist.ui.FoodListAdapter;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.RecipeDetailActivity;
 
@@ -43,6 +44,7 @@ public class FoodListActivity extends AppCompatActivity implements FoodListContr
         DaggerFoodListComponent
                 .builder()
                 .foodListModule(new FoodListModule(this))
+                .foodDataModule(new FoodDataModule(this))
                 .build()
                 .inject(this);
 

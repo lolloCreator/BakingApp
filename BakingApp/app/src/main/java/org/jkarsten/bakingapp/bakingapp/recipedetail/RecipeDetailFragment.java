@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -19,16 +22,19 @@ import com.squareup.picasso.Picasso;
 import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
 import org.jkarsten.bakingapp.bakingapp.data.Food;
+import org.jkarsten.bakingapp.bakingapp.data.FoodDataModule;
 import org.jkarsten.bakingapp.bakingapp.data.Ingredient;
 import org.jkarsten.bakingapp.bakingapp.data.Step;
-import org.jkarsten.bakingapp.bakingapp.foodlist.ui.FoodImageUtil;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.IngredientsAdapter;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.StepsAdapter;
 import org.jkarsten.bakingapp.bakingapp.stepdetail.StepDetailActivity;
+import org.jkarsten.bakingapp.bakingapp.widget.ListViewRemoteViewFactory;
 
 import java.util.List;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 import static org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity.FOOD_ARGS;
 
@@ -43,6 +49,7 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
     RecyclerView mStepsRecyclerView;
     IngredientsAdapter mIngredientsAdapter;
     StepsAdapter mStepsAdapter;
+    FloatingActionButton favoriteButton;
 
     @Inject
     RecipeDetailContract.Presenter mPresenter;
@@ -67,6 +74,15 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
         mIngredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mIngredientsAdapter = new IngredientsAdapter(getContext());
         mIngredientsRecyclerView.setAdapter(mIngredientsAdapter);
+
+        favoriteButton = (FloatingActionButton) mRootView.findViewById(R.id.favorite_toggle_button);
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Timber.d("favoriteButton clicked");
+                mPresenter.onClickFavoriteButton();
+            }
+        });
     }
 
     @Override
@@ -76,6 +92,7 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
         DaggerRecipeDetailComponent
                 .builder()
                 .recipeDetailModule(new RecipeDetailModule(this))
+                .foodDataModule(new FoodDataModule(context))
                 .build()
                 .inject(this);
 
@@ -174,5 +191,19 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
     public void setFoodTitle(String title) {
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar_layout);
         collapsingToolbarLayout.setTitle(title);
+    }
+
+    @Override
+    public void updateWidget(Food food) {
+        ListViewRemoteViewFactory.sendBroadcast(getActivity(), food);
+    }
+
+    @Override
+    public void showImage(boolean favorite) {
+        if (favorite) {
+            favoriteButton.setImageResource(R.drawable.pentagon_made_of_stars);
+        } else {
+            favoriteButton.setImageResource(R.drawable.favourite_star);
+        }
     }
 }

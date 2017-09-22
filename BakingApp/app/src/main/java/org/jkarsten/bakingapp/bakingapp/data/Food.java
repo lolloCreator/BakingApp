@@ -17,6 +17,7 @@ public class Food implements Parcelable {
     private List<Step> steps;
     private String servings;
     private String image;
+    private boolean favorite;
 
     public Food() {
     }
@@ -28,6 +29,7 @@ public class Food implements Parcelable {
         steps = in.createTypedArrayList(Step.CREATOR);
         servings = in.readString();
         image = in.readString();
+        favorite = in.readInt() > 0;
     }
 
     @Override
@@ -38,6 +40,7 @@ public class Food implements Parcelable {
         dest.writeTypedList(steps);
         dest.writeString(servings);
         dest.writeString(image);
+        dest.writeInt(favorite?1:0);
     }
 
     @Override
@@ -105,6 +108,14 @@ public class Food implements Parcelable {
         this.image = image;
     }
 
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
     @Override
     public String toString() {
         return "Food{" +
@@ -114,6 +125,7 @@ public class Food implements Parcelable {
                 ", steps=" + steps +
                 ", servings='" + servings + '\'' +
                 ", image='" + image + '\'' +
+                ", favorite='" + favorite  + '\'' +
                 '}';
     }
 

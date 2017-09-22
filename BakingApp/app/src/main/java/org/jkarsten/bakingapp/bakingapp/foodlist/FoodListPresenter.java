@@ -19,6 +19,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * Created by juankarsten on 8/29/17.
@@ -65,7 +66,7 @@ public class FoodListPresenter implements FoodListContract.Presenter {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        Log.e(FoodListPresenter.class.getSimpleName(), e.toString());
+                        Timber.d(e);
                         mView.showNoInternet();
                     }
 

@@ -34,12 +34,12 @@
                 android:scaleType="centerCrop"
                 />
 
-            <!--<View-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="80dp"-->
-                <!--android:layout_gravity="top"-->
-                <!--android:background="@drawable/scrim"-->
-                <!--android:fitsSystemWindows="true"/>-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/scrim"
+                android:fitsSystemWindows="true"/>
 
 
 
@@ -49,6 +49,13 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_gravity="top"
+                    android:background="@drawable/scrim"
+                    android:fitsSystemWindows="true"/>
 
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -103,4 +110,19 @@
             </android.support.v7.widget.CardView>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/favorite_toggle_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/app_bar_layout"
+        app:layout_anchorGravity="bottom|right|end"
+        app:fabSize="normal"
+        android:src="@drawable/favourite_star"
+        android:elevation="4dp"
+        app:pressedTranslationZ="12dp"
+        app:rippleColor="@android:color/white"
+        app:borderWidth="0dp"
+        android:layout_margin="16dp"
+        android:clickable="true"/>
 </android.support.design.widget.CoordinatorLayout>

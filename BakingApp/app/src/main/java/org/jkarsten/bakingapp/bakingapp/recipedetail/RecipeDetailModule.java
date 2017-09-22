@@ -1,5 +1,7 @@
 package org.jkarsten.bakingapp.bakingapp.recipedetail;
 
+import org.jkarsten.bakingapp.bakingapp.data.source.FoodDataSource;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -15,7 +17,7 @@ public class RecipeDetailModule {
     }
 
     @Provides
-    public RecipeDetailContract.Presenter providePresenter() {
-        return new RecipeDetailPresenter(mView);
+    public RecipeDetailContract.Presenter providePresenter(FoodDataSource foodDataSource) {
+        return new RecipeDetailPresenter(mView, foodDataSource);
     }
 }

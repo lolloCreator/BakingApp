@@ -6,4 +6,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="video_unavailable">Video unavailable</string>
     <string name="mock_description">Preheat the oven to 350\\u00b0F. Butter a 9 deep dish pie pan.</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

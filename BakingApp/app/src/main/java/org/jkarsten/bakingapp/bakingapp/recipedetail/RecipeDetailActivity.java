@@ -2,6 +2,7 @@ package org.jkarsten.bakingapp.bakingapp.recipedetail;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Button;
 
 import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
@@ -19,8 +20,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnDualPan
         setContentView(R.layout.activity_recipe_detail);
 
         mDualPane = (findViewById(R.id.dual_pane_layout) != null);
-
-
     }
 
     @Override
