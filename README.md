@@ -1,7 +1,11 @@
 # Baking App
-Baking is the third project of Android Nanodegree from Udacity. The purpose of the project is to build an android application to display cake recipes and show video instructions to bake the cake. In addition, the app is optimized for tablet with dual pane layout. 
+Baking is the third project of Android Nanodegree from Udacity. The purpose of the project is to build an android application to display cake recipes and show video instructions to bake the cake. In addition, the app is optimized for tablet with dual pane layout.
 
-<img width="15%" src="README/front.png" /> <img width="15%" src="README/detail.png" /> <img width="15%" src="README/video.png" /> <img width="40%" src="README/tablet.png" />
+<img width="40%" src="README/front.png" /> <img width="40%"  src="README/detail.png" />
+
+ <img width="40%"  src="README/video.png" /> <img width="40%"  src="README/widget.png" />
+
+<img width="80%"  src="README/tablet.png" />
 
 
 ## Installation
