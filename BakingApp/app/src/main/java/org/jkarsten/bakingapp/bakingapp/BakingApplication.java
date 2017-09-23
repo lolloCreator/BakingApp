@@ -14,11 +14,6 @@ public class BakingApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, BakingWidgetProvider.class));
-        //Trigger data update to handle the GridView widgets and force a data refresh
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view);
-        BakingWidgetProvider.updateAppWidgets(this, appWidgetManager, appWidgetIds);
+        BakingWidgetProvider.notifyDataSetChanged(this);
     }
 }

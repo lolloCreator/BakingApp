@@ -206,12 +206,8 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
     @Override
     public void updateWidget(Food food) {
         //ListViewRemoteViewFactory.sendBroadcast(getActivity(), food);
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getContext());
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(getContext(), BakingWidgetProvider.class));
         //Trigger data update to handle the GridView widgets and force a data refresh
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view);
-        BakingWidgetProvider.updateAppWidgets(getContext(), appWidgetManager, appWidgetIds);
-
+        BakingWidgetProvider.notifyDataSetChanged(getContext());
         if (mSimpleIdlingResource != null)
             mSimpleIdlingResource.setIsIdleResource(true);
     }

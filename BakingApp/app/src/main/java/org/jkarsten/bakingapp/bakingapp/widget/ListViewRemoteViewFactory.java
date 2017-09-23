@@ -55,9 +55,10 @@ public class ListViewRemoteViewFactory
     @Override
     public void onCreate() {
         Log.d(ListViewRemoteViewFactory.class.getSimpleName(), "onCreate");
-
         mDisposable = new CompositeDisposable();
     }
+
+
 
     @Override
     public void onDataSetChanged() {
@@ -74,9 +75,10 @@ public class ListViewRemoteViewFactory
                 .subscribe(new Consumer<Food>() {
                     @Override
                     public void accept(Food food) throws Exception {
-                            if (food.isFavorite()) {
-                                mFood = food;
-                            }
+                        if (food.isFavorite()) {
+                            mFood = food;
+                            BakingWidgetProvider.updateWidgets(mContext);
+                        }
                     }
                 });
         mDisposable.add(disposable);
