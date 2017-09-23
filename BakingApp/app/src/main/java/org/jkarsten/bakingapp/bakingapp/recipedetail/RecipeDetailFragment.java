@@ -27,6 +27,7 @@ import org.jkarsten.bakingapp.bakingapp.data.Food;
 import org.jkarsten.bakingapp.bakingapp.data.FoodDataModule;
 import org.jkarsten.bakingapp.bakingapp.data.Ingredient;
 import org.jkarsten.bakingapp.bakingapp.data.Step;
+import org.jkarsten.bakingapp.bakingapp.idlingResource.SimpleIdlingResource;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.IngredientsAdapter;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.StepsAdapter;
 import org.jkarsten.bakingapp.bakingapp.stepdetail.StepDetailActivity;
@@ -53,6 +54,8 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
     IngredientsAdapter mIngredientsAdapter;
     StepsAdapter mStepsAdapter;
     FloatingActionButton favoriteButton;
+
+    private static SimpleIdlingResource mSimpleIdlingResource;
 
     @Inject
     RecipeDetailContract.Presenter mPresenter;
@@ -83,6 +86,8 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
             @Override
             public void onClick(View view) {
                 Timber.d("favoriteButton clicked");
+                if (mSimpleIdlingResource != null)
+                    mSimpleIdlingResource.setIsIdleResource(false);
                 mPresenter.onClickFavoriteButton();
             }
         });
@@ -128,6 +133,8 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
         AppCompatActivity activity = (AppCompatActivity)getActivity();
         activity.setSupportActionBar(toolbar);
 
+        if (mSimpleIdlingResource != null)
+            mSimpleIdlingResource.setIsIdleResource(false);
         mPresenter.start();
     }
 
@@ -204,6 +211,9 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
         //Trigger data update to handle the GridView widgets and force a data refresh
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view);
         BakingWidgetProvider.updateAppWidgets(getContext(), appWidgetManager, appWidgetIds);
+
+        if (mSimpleIdlingResource != null)
+            mSimpleIdlingResource.setIsIdleResource(true);
     }
 
     @Override
@@ -213,5 +223,12 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
         } else {
             favoriteButton.setImageResource(R.drawable.favourite_star);
         }
+    }
+
+    public static SimpleIdlingResource getSimpleIdlingResource() {
+        if (mSimpleIdlingResource == null) {
+            mSimpleIdlingResource = new SimpleIdlingResource();
+        }
+        return mSimpleIdlingResource;
     }
 }

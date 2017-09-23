@@ -7,6 +7,7 @@ import android.widget.Button;
 import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
 import org.jkarsten.bakingapp.bakingapp.R;
 import org.jkarsten.bakingapp.bakingapp.data.Step;
+import org.jkarsten.bakingapp.bakingapp.idlingResource.SimpleIdlingResource;
 
 import io.reactivex.subjects.PublishSubject;
 
@@ -50,4 +51,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnDualPan
         }
         return mPublishSubject;
     }
+
+
 }
