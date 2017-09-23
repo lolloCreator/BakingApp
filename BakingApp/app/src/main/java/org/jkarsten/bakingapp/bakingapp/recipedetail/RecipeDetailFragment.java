@@ -1,5 +1,7 @@
 package org.jkarsten.bakingapp.bakingapp.recipedetail;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import org.jkarsten.bakingapp.bakingapp.data.Step;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.IngredientsAdapter;
 import org.jkarsten.bakingapp.bakingapp.recipedetail.ui.StepsAdapter;
 import org.jkarsten.bakingapp.bakingapp.stepdetail.StepDetailActivity;
+import org.jkarsten.bakingapp.bakingapp.widget.BakingWidgetProvider;
 import org.jkarsten.bakingapp.bakingapp.widget.ListViewRemoteViewFactory;
 
 import java.util.List;
@@ -195,7 +198,12 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
 
     @Override
     public void updateWidget(Food food) {
-        ListViewRemoteViewFactory.sendBroadcast(getActivity(), food);
+        //ListViewRemoteViewFactory.sendBroadcast(getActivity(), food);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getContext());
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(getContext(), BakingWidgetProvider.class));
+        //Trigger data update to handle the GridView widgets and force a data refresh
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view);
+        BakingWidgetProvider.updateAppWidgets(getContext(), appWidgetManager, appWidgetIds);
     }
 
     @Override

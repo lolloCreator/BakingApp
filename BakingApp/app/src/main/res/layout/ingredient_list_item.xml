@@ -2,13 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp">
+    android:padding="4dp"
+    android:background="@android:color/background_light">
     <TextView
         android:id="@+id/ingredient_item_name_textview"
         android:layout_marginLeft="8dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"/>
     <ImageView
+        android:id="@+id/bottom_border"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:paddingTop="2dp"
