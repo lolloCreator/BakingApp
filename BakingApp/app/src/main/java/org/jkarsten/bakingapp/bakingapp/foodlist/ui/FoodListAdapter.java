@@ -9,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.jkarsten.bakingapp.bakingapp.R;
 import org.jkarsten.bakingapp.bakingapp.data.Food;
+import org.jkarsten.bakingapp.bakingapp.foodlist.FoodListActivity;
+import org.jkarsten.bakingapp.bakingapp.idlingResource.SimpleIdlingResource;
 
 import java.util.List;
 
@@ -21,6 +24,7 @@ import java.util.List;
  */
 
 public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.FoodListViewHolder> {
+    private SimpleIdlingResource mSimpleIdlingResource;
     private List<Food> foods;
     private Context mContext;
     private OnFoodSelected mOnFoodSelected;
@@ -28,6 +32,11 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.FoodLi
     public FoodListAdapter(Context mContext, OnFoodSelected onFoodSelected) {
         this.mContext = mContext;
         this.mOnFoodSelected = onFoodSelected;
+    }
+
+    public FoodListAdapter(Context context, OnFoodSelected onFoodSelected, SimpleIdlingResource simpleIdlingResource) {
+        this(context, onFoodSelected);
+        mSimpleIdlingResource = simpleIdlingResource;
     }
 
     public void setFoods(List<Food> foods) {
@@ -72,9 +81,23 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.FoodLi
 
         public void bind(final Food food) {
             String url = FoodImageUtil.getFoodImageURL(food);
+            if (mSimpleIdlingResource != null)
+                mSimpleIdlingResource.setIsIdleResource(false);
             Picasso.with(mContext)
                     .load(url)
-                    .into(mFoodImageView);
+                    .into(mFoodImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            if (mSimpleIdlingResource != null)
+                                mSimpleIdlingResource.setIsIdleResource(true);
+                        }
+
+                        @Override
+                        public void onError() {
+                            if (mSimpleIdlingResource != null)
+                                mSimpleIdlingResource.setIsIdleResource(true);
+                        }
+                    });
 
             mFoodNameTextView.setText(food.getName());
 

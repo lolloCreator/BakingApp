@@ -2,15 +2,13 @@ package org.jkarsten.bakingapp.bakingapp.foodlist;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import org.jkarsten.bakingapp.bakingapp.R;
+import org.jkarsten.bakingapp.bakingapp.idlingResource.SimpleIdlingResource;
 import org.jkarsten.bakingapp.bakingapp.data.Food;
 import org.jkarsten.bakingapp.bakingapp.data.FoodDataModule;
 import org.jkarsten.bakingapp.bakingapp.foodlist.ui.FoodListAdapter;
@@ -19,8 +17,6 @@ import org.jkarsten.bakingapp.bakingapp.recipedetail.RecipeDetailActivity;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import dagger.internal.DaggerCollections;
 
 public class FoodListActivity extends AppCompatActivity implements FoodListContract.View,
         FoodListAdapter.OnFoodSelected {
@@ -33,6 +29,8 @@ public class FoodListActivity extends AppCompatActivity implements FoodListContr
     RecyclerView mFoodListRecyclerView;
     FoodListAdapter mFoodListAdapter;
     GridLayoutManager mGridLayoutManager;
+
+    private static SimpleIdlingResource mSimpleIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +49,15 @@ public class FoodListActivity extends AppCompatActivity implements FoodListContr
         mFoodListRecyclerView = (RecyclerView) findViewById(R.id.food_list_recyclerview);
         mGridLayoutManager = new GridLayoutManager(this, 2);
         mFoodListRecyclerView.setLayoutManager(mGridLayoutManager);
-        mFoodListAdapter = new FoodListAdapter(this, this);
+        mFoodListAdapter = new FoodListAdapter(this, this, mSimpleIdlingResource);
         mFoodListRecyclerView.setAdapter(mFoodListAdapter);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        if (mSimpleIdlingResource != null)
+            mSimpleIdlingResource.setIsIdleResource(false);
         mPresenter.start();
     }
 
@@ -75,6 +75,8 @@ public class FoodListActivity extends AppCompatActivity implements FoodListContr
     @Override
     public void showFoods(List<Food> foods) {
         mFoodListAdapter.setFoods(foods);
+        if (mSimpleIdlingResource != null)
+            mSimpleIdlingResource.setIsIdleResource(true);
     }
 
     @Override
@@ -97,5 +99,14 @@ public class FoodListActivity extends AppCompatActivity implements FoodListContr
     @Override
     public void onSelected(Food food) {
         mPresenter.viewFood(food);
+    }
+
+
+
+    public static SimpleIdlingResource getSimpleIdlingResource() {
+        if (mSimpleIdlingResource == null) {
+            mSimpleIdlingResource = new SimpleIdlingResource();
+        }
+        return mSimpleIdlingResource;
     }
 }
