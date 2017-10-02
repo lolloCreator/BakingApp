@@ -8,6 +8,10 @@ import org.jkarsten.bakingapp.bakingapp.data.Food;
 
 public class FoodImageUtil {
     public static String getFoodImageURL(Food food) {
+        if (food.getImage() != null && food.getImage().length() > 0) {
+            return food.getImage();
+        }
+
         String url = "https://static.pexels.com/photos/205961/pexels-photo-205961.jpeg";
         if (food.getName().equals("Brownies")) {
             url = "https://cdn.pixabay.com/photo/2014/11/28/08/03/brownie-548591_640.jpg";

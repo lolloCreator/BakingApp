@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -36,6 +37,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.PublishSubject;
 
 public class StepDetailFragment extends Fragment implements StepDetailContract.View {
+    private static final String PLAYER_POSITION = "PLAYER_POSITION";
     private OnDualPaneInteractionListener mListener;
     TextView mStepDescTextView;
     View mRootView;
@@ -48,6 +50,7 @@ public class StepDetailFragment extends Fragment implements StepDetailContract.V
     //private int mStepPosition;
     private SimpleExoPlayerView mPlayerView;
     private SimpleExoPlayer mExoPlayer;
+    private long mPlayerPosition;
     private Button mPreviousButton;
     private Button mNextButton;
 
@@ -62,6 +65,8 @@ public class StepDetailFragment extends Fragment implements StepDetailContract.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
+        if (savedInstanceState != null)
+            mPlayerPosition = savedInstanceState.getLong(PLAYER_POSITION, C.TIME_UNSET);
         return mRootView;
     }
 
@@ -161,6 +166,9 @@ public class StepDetailFragment extends Fragment implements StepDetailContract.V
                     new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
+            if (mPlayerPosition != C.TIME_UNSET) {
+                mExoPlayer.seekTo(mPlayerPosition);
+            }
         }
     }
 
@@ -181,7 +189,11 @@ public class StepDetailFragment extends Fragment implements StepDetailContract.V
                 releasePlayer();
             }
             intializePlayer();
-            initMediaSource(step.getVideoURL());
+            if (step.getVideoURL() == null || step.getVideoURL().length() == 0) {
+                initMediaSource(step.getThumbnailURL());
+            } else {
+                initMediaSource(step.getVideoURL());
+            }
         }
     }
 
@@ -209,5 +221,17 @@ public class StepDetailFragment extends Fragment implements StepDetailContract.V
         super.onStop();
         mPresenter.stop();
         releasePlayer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPlayerPosition = mExoPlayer.getCurrentPosition();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(PLAYER_POSITION, mPlayerPosition);
     }
 }
