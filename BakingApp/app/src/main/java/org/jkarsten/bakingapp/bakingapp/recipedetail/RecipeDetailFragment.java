@@ -130,8 +130,6 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
         initRecyclerView();
 
         Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
-        AppCompatActivity activity = (AppCompatActivity)getActivity();
-        activity.setSupportActionBar(toolbar);
 
         if (mSimpleIdlingResource != null)
             mSimpleIdlingResource.setIsIdleResource(false);
@@ -201,6 +199,9 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
     public void setFoodTitle(String title) {
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar_layout);
         collapsingToolbarLayout.setTitle(title);
+
+        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
+        toolbar.setTitle(title);
     }
 
     @Override

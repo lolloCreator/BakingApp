@@ -2,6 +2,7 @@ package org.jkarsten.bakingapp.bakingapp.recipedetail;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.widget.Button;
 
 import org.jkarsten.bakingapp.bakingapp.OnDualPaneInteractionListener;
@@ -21,6 +22,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements OnDualPan
         setContentView(R.layout.activity_recipe_detail);
 
         mDualPane = (findViewById(R.id.dual_pane_layout) != null);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

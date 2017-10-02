@@ -34,6 +34,13 @@
                 android:scaleType="centerCrop"
                 />
 
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
@@ -41,23 +48,13 @@
                 android:background="@drawable/scrim"
                 android:fitsSystemWindows="true"/>
 
-
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                android:layout_height="80dp"
+                android:layout_gravity="top"
+                android:background="@drawable/scrim"
+                android:fitsSystemWindows="true"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_gravity="top"
-                    android:background="@drawable/scrim"
-                    android:fitsSystemWindows="true"/>
-
-            </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>

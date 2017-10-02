@@ -23,8 +23,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".recipedetail.RecipeDetailActivity" />
-        <activity android:name=".stepdetail.StepDetailActivity" />
+        <activity
+            android:name=".recipedetail.RecipeDetailActivity"
+            android:parentActivityName=".foodlist.FoodListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".foodlist.FoodListActivity"/>
+        </activity>
+
+        <activity android:name=".stepdetail.StepDetailActivity"
+            android:parentActivityName=".recipedetail.RecipeDetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".recipedetail.RecipeDetailActivity"/>
+        </activity>
 
         <receiver android:name=".widget.BakingWidgetProvider">
             <intent-filter>
