@@ -32,10 +32,10 @@
         </activity>
 
         <activity android:name=".stepdetail.StepDetailActivity"
-            android:parentActivityName=".recipedetail.RecipeDetailActivity">
+            android:parentActivityName=".foodlist.FoodListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".recipedetail.RecipeDetailActivity"/>
+                android:value=".foodlist.FoodListActivity"/>
         </activity>
 
         <receiver android:name=".widget.BakingWidgetProvider">
