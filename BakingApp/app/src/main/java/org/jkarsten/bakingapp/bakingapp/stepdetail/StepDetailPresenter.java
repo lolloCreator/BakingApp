@@ -80,9 +80,8 @@ public class StepDetailPresenter implements StepDetailContract.Presenter {
         String video = null;
         if (step.getVideoURL() != null && step.getVideoURL().length() != 0) {
             video = step.getVideoURL();
-        } else if (step.getThumbnailURL() != null && step.getThumbnailURL().length() != 0) {
-            video = step.getThumbnailURL();
         }
+
         if (video == null) {
             mView.showVideoUnavailable();
         } else {

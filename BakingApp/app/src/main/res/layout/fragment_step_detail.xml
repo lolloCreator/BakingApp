@@ -13,7 +13,9 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintGuide_percent="0.60" />
+        app:layout_constraintGuide_percent="0.6"
+        tools:layout_editor_absoluteY="340dp"
+        tools:layout_editor_absoluteX="0dp" />
 
     <TextView
         android:id="@+id/description_textview"
@@ -55,6 +57,13 @@
         android:layout_marginTop="8dp"
         app:layout_constraintVertical_bias="1.0" />
 
+    <ImageView
+        android:id="@+id/thumbnail_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="0dp" />
+
     <TextView
         android:id="@+id/video_unavailable_textView"
         android:layout_width="wrap_content"
@@ -68,7 +77,7 @@
         app:layout_constraintRight_toRightOf="@+id/player_view"/>
 
     <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:id="@+id/app_bar_layout"

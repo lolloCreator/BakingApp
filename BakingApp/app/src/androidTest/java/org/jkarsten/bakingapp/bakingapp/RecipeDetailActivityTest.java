@@ -8,6 +8,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.assertion.ViewAssertions;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -28,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by juankarsten on 9/23/17.
@@ -40,6 +42,24 @@ public class RecipeDetailActivityTest {
     @Rule
     public ActivityTestRule<RecipeDetailActivity> recipeDetailActivityActivityTestRule =
             new ActivityTestRule<RecipeDetailActivity>(RecipeDetailActivity.class) {
+
+                public Step[] getSteps() {
+                    Step[] steps = new Step[2];
+                    steps[0] = new Step();
+                    steps[0].setId(0);
+                    steps[0].setDescription("Step 0");
+                    steps[0].setShortDescription("short step 0");
+                    steps[0].setVideoURL("video0");
+
+                    steps[1] = new Step();
+                    steps[1].setId(1);
+                    steps[1].setDescription("Step 1");
+                    steps[1].setShortDescription("short step 1");
+                    steps[1].setVideoURL("video1");
+
+                    return steps;
+                }
+
                 @Override
                 protected void beforeActivityLaunched() {
                     super.beforeActivityLaunched();
@@ -58,7 +78,7 @@ public class RecipeDetailActivityTest {
                     food.setIngredients(new ArrayList<Ingredient>());
                     food.setName("Brownies");
                     food.setServings("3 servings");
-                    food.setSteps(new ArrayList<Step>());
+                    food.setSteps(new ArrayList<Step>(Arrays.asList(getSteps())));
 
                     result.putExtra(FoodListActivity.FOOD_ARGS, food);
                     return result;
@@ -93,6 +113,17 @@ public class RecipeDetailActivityTest {
                 .getDefaultSharedPreferences(recipeDetailActivityActivityTestRule.getActivity());
         Assert.assertEquals(food.getId(),
                 preferences.getInt(RemoteFoodDataSource.LOCAL_PREF_FOOD,-1));
+    }
+
+    @Test
+    public void clickStep_ShowStepDetailActivity() {
+        Espresso.onView(ViewMatchers.withId(R.id.steps_recyclerview));
+        Espresso.onView(ViewMatchers.withId(R.id.steps_recyclerview))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, ViewActions.click()));
+        Espresso.onView(ViewMatchers.withId(R.id.description_textview))
+                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+        Espresso.onView(ViewMatchers.withId(R.id.description_textview))
+                .check(ViewAssertions.matches(ViewMatchers.withText("Step 0")));
     }
 }
 
